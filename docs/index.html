@@ -41,16 +41,17 @@ body { background: var(--page); color: var(--cream); font-family: var(--body); }
 .sec h2 { margin: 0 0 14px; font: 700 34px var(--display); text-transform: uppercase; letter-spacing: .08em; color: var(--price); display: flex; align-items: baseline; gap: 14px; }
 .sec h2 small { font: 500 20px var(--body); letter-spacing: .02em; color: var(--muted); text-transform: none; }
 .row { display: grid; grid-template-columns: minmax(0, auto) 1fr auto; align-items: baseline; gap: 12px; padding: 9px 0; }
-.row .n { font: 500 35px/1.18 var(--body); }
+.row .n { font: 500 36px/1.15 var(--body); }
+.lunch .row { padding: 8px 0; }
 .row .n em { display: block; font-style: normal; font-size: 21px; color: var(--muted); margin-top: 3px; }
 .row .dots { border-bottom: 3px dotted var(--line); transform: translateY(-8px); min-width: 24px; }
-.row .p { font: 700 35px var(--display); color: var(--price); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.row .p { font: 700 36px var(--display); color: var(--price); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .row .p span { font: 500 24px var(--body); margin-left: 4px; }
 .compact { gap: 40px; }
 .compact .row { padding: 5px 0; gap: 8px; }
-.compact .row .n { font-size: 26px; }
+.compact .row .n { font-size: 28px; }
 .compact .row .n em { font-size: 18px; }
-.compact .row .p { font-size: 26px; }
+.compact .row .p { font-size: 28px; }
 .compact .row .p span { font-size: 19px; }
 .strip { display: flex; flex-wrap: wrap; gap: 14px 40px; align-items: baseline; border-top: 2px solid var(--line); padding-top: 22px; }
 .strip b { font: 700 26px var(--display); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-right: 8px; }
@@ -87,8 +88,8 @@ function header(title, hours) {
 }
 function lunch() {
   const drinks = pick(['Морс в ассортименте','Чай','Пунш','Сок апельсиновый','Хлеб']);
-  return header('Обед', 'с 11:00 до 15:00') +
-    `<div class="cols" style="grid-template-columns: 1.15fr 1fr 1fr">
+  return header('Обед', 'с 11:45 до 16:00') +
+    `<div class="cols lunch" style="grid-template-columns: 1.3fr 1fr 1fr">
       <div class="col">${sec('Салаты', MENU['Салат'])}</div>
       <div class="col">${sec('Супы', MENU['Суп'])}${sec('Гарниры', MENU['Гарнир'])}</div>
       <div class="col">${sec('Горячее', MENU['Горячее'])}</div>
@@ -98,7 +99,7 @@ function breakfast() {
   const b = MENU['Завтрак'] || [], bh = Math.ceil(b.length / 2);
   const v = MENU['Выпечка'] || [], vh = Math.ceil(v.length / 2);
   const drinks = pick(['Чай','Морс в ассортименте','Сок апельсиновый','Пунш']);
-  return header('Завтрак', 'до 11:00') +
+  return header('Завтрак', 'с 08:00 до 11:45') +
     `<div class="cols compact" style="grid-template-columns: repeat(4, minmax(0, 1fr))">
       <div class="col">${sec('Завтраки', b.slice(0, bh))}</div>
       <div class="col">${sec('&nbsp;', b.slice(bh))}</div>
@@ -111,9 +112,10 @@ const stage = document.getElementById('stage'), frame = document.getElementById(
 function current() {
   const h = location.hash.slice(1);
   if (h === 'zavtrak' || h === 'obed') return h;
-  return new Date().getHours() < 11 ? 'zavtrak' : 'obed';
+  return (n => n.getHours() * 60 + n.getMinutes() < 705)(new Date()) ? 'zavtrak' : 'obed';
 }
-function render() { DAY = new Date(SOURCE.date + 'T12:00:00'); stage.dataset.m = current(); stage.innerHTML = current() === 'zavtrak' ? breakfast() : lunch(); tick(); fit(); }
+function render() { DAY = new Date(SOURCE.date + 'T12:00:00'); stage.dataset.m = current(); stage.innerHTML = current() === 'zavtrak' ? breakfast() : lunch(); tick(); fit(); shrink(); }
+function shrink() { const c = stage.querySelector('.cols'); if (!c) return; let z = 1; c.style.zoom = 1; c.style.overflow = 'hidden'; while (c.scrollHeight > c.clientHeight + 2 && z > 0.6) { z -= 0.04; c.style.zoom = z; } }
 function tick() { const c = document.getElementById('clock'); if (c) c.textContent = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }); }
 function fit() {
   const s = Math.min(innerWidth / 1920, innerHeight / 1080);
