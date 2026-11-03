@@ -1,26 +1,40 @@
 name: Обновить меню из Saby
+# Раз в час GitHub запускает задачу, а она внутри каждые 3 минуты проверяет меню в Saby.
+# Новый запуск отменяет предыдущий, поэтому проверка идёт без перерывов (будни 06:00–17:00 МСК).
 on:
   schedule:
-    - cron: '*/5 3-13 * * 1-5'   # каждые 5 минут, 06:00–16:59 МСК, пн–пт
+    - cron: '7 3-13 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write
-concurrency: menu
+concurrency:
+  group: menu
+  cancel-in-progress: true
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 130
     steps:
       - uses: actions/checkout@v4
-      - name: Забрать меню
+      - name: Проверять меню каждые 3 минуты
         env:
           SABY_APP_ID: ${{ secrets.SABY_APP_ID }}
           SABY_APP_SECRET: ${{ secrets.SABY_APP_SECRET }}
           SABY_SECRET_KEY: ${{ secrets.SABY_SECRET_KEY }}
-        run: python3 fetch_menu.py
-      - name: Сохранить, если изменилось
         run: |
           git config user.name "menu-bot"
           git config user.email "menu-bot@users.noreply.github.com"
-          git add docs/menu.json
-          git diff --cached --quiet || (git commit -m "Меню $(TZ=Europe/Moscow date '+%d.%m %H:%M')" && git push)
+          end=$((SECONDS + 125 * 60))
+          first=1
+          while [ $SECONDS -lt $end ]; do
+            h=$(TZ=Europe/Moscow date +%H)
+            if [ "$first" = 0 ] && { [ "$h" -lt 6 ] || [ "$h" -ge 17 ]; }; then echo "вне рабочего времени — стоп"; break; fi
+            first=0
+            python3 fetch_menu.py || echo "Saby не ответил, попробую через 3 минуты"
+            git add docs/menu.json
+            if ! git diff --cached --quiet; then
+              git commit -m "Меню $(TZ=Europe/Moscow date '+%d.%m %H:%M')"
+              git pull --rebase -q origin main && git push -q origin main || echo "push не прошёл, повторю"
+            fi
+            sleep 180
+          done
