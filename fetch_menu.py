@@ -21,10 +21,15 @@ def retry(f):
     return w
 
 
+# ключи из секретов GitHub; убираем случайные пробелы, переносы и кавычки при вставке
+KEY = {k: os.environ.get(k, '').strip().strip('`"\' ').strip() for k in ('SABY_APP_ID', 'SABY_APP_SECRET', 'SABY_SECRET_KEY')}
+print('длины ключей:', {k: len(v) for k, v in KEY.items()}, '(должно быть 16, 24, 118)')
+
+
 @retry
 def auth():
-    body = json.dumps({"app_client_id": os.environ['SABY_APP_ID'], "app_secret": os.environ['SABY_APP_SECRET'],
-                       "secret_key": os.environ['SABY_SECRET_KEY']}).encode()
+    body = json.dumps({"app_client_id": KEY['SABY_APP_ID'], "app_secret": KEY['SABY_APP_SECRET'],
+                       "secret_key": KEY['SABY_SECRET_KEY']}).encode()
     r = urllib.request.urlopen(urllib.request.Request('https://online.sbis.ru/oauth/service/', data=body,
                                headers={'Content-Type': 'application/json; charset=utf-8'}), timeout=60)
     j = json.loads(r.read())
