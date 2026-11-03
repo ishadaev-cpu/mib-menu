@@ -97,15 +97,13 @@ function lunch() {
     </div>` + strip('К обеду', drinks);
 }
 function breakfast() {
-  const b = MENU['Завтрак'] || [], bh = Math.ceil(b.length / 2);
-  const v = MENU['Выпечка'] || [], vh = Math.ceil(v.length / 2);
+  const b = MENU['Завтрак'] || [], k = Math.ceil(b.length / 3);
   const drinks = pick(['Чай','Морс в ассортименте','Сок апельсиновый','Пунш']);
   return header('Завтрак', 'с 08:00 до 11:45') +
-    `<div class="cols compact" style="grid-template-columns: repeat(4, minmax(0, 1fr))">
-      <div class="col">${sec('Завтраки', b.slice(0, bh))}</div>
-      <div class="col">${sec('&nbsp;', b.slice(bh))}</div>
-      <div class="col">${sec('Выпечка', v.slice(0, vh))}</div>
-      <div class="col">${sec('&nbsp;', v.slice(vh))}</div>
+    `<div class="cols lunch" style="grid-template-columns: repeat(3, minmax(0, 1fr))">
+      <div class="col">${sec('Завтраки', b.slice(0, k))}</div>
+      <div class="col">${sec('&nbsp;', b.slice(k, 2 * k))}</div>
+      <div class="col">${sec('&nbsp;', b.slice(2 * k))}</div>
     </div>` + strip('Напитки', drinks);
 }
 
