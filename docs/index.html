@@ -96,14 +96,36 @@ function lunch() {
       <div class="col">${sec('Горячее', MENU['Горячее'])}</div>
     </div>` + strip('К обеду', drinks);
 }
+const BCATS = [
+  ['Блины', /блин/i],
+  ['Яйца и омлеты', /омлет|яичниц|яйц/i],
+  ['Каши и творог', /каша|сырник|запеканк|творож/i],
+  ['Сеты и сэндвичи', /завтрак|сэндвич|тост/i],
+  ['Мясное', /бекон|сардел|сосиск|колбас|ветчин/i],
+  ['Горячие закуски', /хашбраун|драник|палочк|картоф|наггет/i],
+  ['Сладкое', /вафл|фрукт|блинч.*банан|джем|йогурт|гранол|мюсли/i],
+];
+function bgroups(list) {
+  const out = BCATS.map(([t]) => [t, []]); const rest = [];
+  const ORDER = [3, 0, 2, 4, 5, 6, 1];  // сначала сеты (в описании есть «яйцо»), потом остальное
+  list.forEach(it => { const i = ORDER.find(k => BCATS[k][1].test(it.name)) ?? -1; (i < 0 ? rest : out[i][1]).push(it); });
+  if (rest.length) out.push(['Ещё', rest]);
+  return out.filter(([, v]) => v.length);
+}
 function breakfast() {
-  const b = MENU['Завтрак'] || [], k = Math.ceil(b.length / 3);
+  const groups = bgroups(MENU['Завтрак'] || []);
+  const w = g => g[1].reduce((a, it) => a + (it.name.length > 24 ? 1.6 : 1), 0) + 1.4;
+  const n = groups.length, cols = [[], [], []]; let best = null;
+  for (let i = 0; i <= n; i++) for (let j = i; j <= n; j++) {
+    const parts = [groups.slice(0, i), groups.slice(i, j), groups.slice(j)];
+    const m = Math.max(...parts.map(p => p.reduce((a, g) => a + w(g), 0)));
+    if (!best || m < best.m) best = { m, parts };
+  }
+  best.parts.forEach((p, k) => cols[k] = p);
   const drinks = pick(['Чай','Морс в ассортименте','Сок апельсиновый','Пунш']);
   return header('Завтрак', 'с 08:00 до 11:45') +
     `<div class="cols lunch" style="grid-template-columns: repeat(3, minmax(0, 1fr))">
-      <div class="col">${sec('Завтраки', b.slice(0, k))}</div>
-      <div class="col">${sec('&nbsp;', b.slice(k, 2 * k))}</div>
-      <div class="col">${sec('&nbsp;', b.slice(2 * k))}</div>
+      ${cols.map(c => `<div class="col">${c.map(([t, v]) => sec(t, v)).join('')}</div>`).join('')}
     </div>` + strip('Напитки', drinks);
 }
 
