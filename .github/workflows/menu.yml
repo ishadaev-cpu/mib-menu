@@ -1,0 +1,26 @@
+name: Обновить меню из Saby
+on:
+  schedule:
+    - cron: '*/5 3-13 * * 1-5'   # каждые 5 минут, 06:00–16:59 МСК, пн–пт
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: menu
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Забрать меню
+        env:
+          SABY_APP_ID: ${{ secrets.SABY_APP_ID }}
+          SABY_APP_SECRET: ${{ secrets.SABY_APP_SECRET }}
+          SABY_SECRET_KEY: ${{ secrets.SABY_SECRET_KEY }}
+        run: python3 fetch_menu.py
+      - name: Сохранить, если изменилось
+        run: |
+          git config user.name "menu-bot"
+          git config user.email "menu-bot@users.noreply.github.com"
+          git add docs/menu.json
+          git diff --cached --quiet || (git commit -m "Меню $(TZ=Europe/Moscow date '+%d.%m %H:%M')" && git push)
