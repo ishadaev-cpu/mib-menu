@@ -29,34 +29,35 @@ body { background: var(--page); color: var(--cream); font-family: var(--body); }
 .frame { width: 100%; position: relative; overflow: hidden; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,.45); background: var(--board); }
 .stage { width: 1920px; height: 1080px; transform-origin: 0 0; position: absolute; top: 0; left: 0;
   background: radial-gradient(ellipse at 30% 20%, #23463a 0%, var(--board) 55%, var(--board-deep) 100%);
-  padding: 56px 72px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 34px; }
-.top { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; border-bottom: 2px solid var(--line); padding-bottom: 26px; }
-.top h1 { margin: 0; font: 700 76px/1 var(--display); letter-spacing: .01em; text-transform: uppercase; }
-.top .hours { font: 500 30px var(--body); color: var(--price); margin-top: 14px; letter-spacing: .04em; }
+  padding: 30px 64px 34px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 40px; border-bottom: 2px solid var(--line); padding-bottom: 14px; }
+.top h1 { margin: 0; display: inline; font: 700 46px/1 var(--display); letter-spacing: .01em; text-transform: uppercase; }
+.top .hours { display: inline; margin-left: 24px; font: 500 28px var(--body); color: var(--price); letter-spacing: .04em; }
 .top .when { text-align: right; }
-.top .date { font: 500 34px var(--body); color: var(--cream); }
-.top .clock { font: 700 64px/1 var(--display); color: var(--cream); font-variant-numeric: tabular-nums; margin-top: 8px; }
+.top .when { display: flex; align-items: baseline; gap: 24px; }
+.top .date { font: 500 28px var(--body); color: var(--muted); }
+.top .clock { font: 700 44px/1 var(--display); color: var(--cream); font-variant-numeric: tabular-nums; }
 .cols { flex: 1; display: grid; gap: 64px; min-height: 0; }
 .col { display: flex; flex-direction: column; gap: 30px; min-width: 0; }
-.sec h2 { margin: 0 0 14px; font: 700 34px var(--display); text-transform: uppercase; letter-spacing: .08em; color: var(--price); display: flex; align-items: baseline; gap: 14px; }
+.sec h2 { margin: 0 0 10px; font: 700 43px var(--display); text-transform: uppercase; letter-spacing: .08em; color: var(--price); display: flex; align-items: baseline; gap: 14px; }
 .sec h2 small { font: 500 20px var(--body); letter-spacing: .02em; color: var(--muted); text-transform: none; }
 .row { display: grid; grid-template-columns: minmax(0, auto) 1fr auto; align-items: baseline; gap: 12px; padding: 9px 0; }
-.row .n { font: 500 36px/1.15 var(--body); }
+.row .n { font: 500 43px/1.12 var(--body); }
 .lunch .row { padding: 8px 0; }
-.row .n em { display: block; font-style: normal; font-size: 21px; color: var(--muted); margin-top: 3px; }
+.row .n em { display: block; font-style: normal; font-size: 24px; color: var(--muted); margin-top: 3px; }
 .row .dots { border-bottom: 3px dotted var(--line); transform: translateY(-8px); min-width: 24px; }
-.row .p { font: 700 36px var(--display); color: var(--price); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.row .p span { font: 500 24px var(--body); margin-left: 4px; }
+.row .p { font: 700 43px var(--display); color: var(--price); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.row .p span { font: 500 28px var(--body); margin-left: 4px; }
 .compact { gap: 40px; }
 .compact .row { padding: 5px 0; gap: 8px; }
-.compact .row .n { font-size: 28px; }
-.compact .row .n em { font-size: 18px; }
-.compact .row .p { font-size: 28px; }
-.compact .row .p span { font-size: 19px; }
-.strip { display: flex; flex-wrap: wrap; gap: 14px 40px; align-items: baseline; border-top: 2px solid var(--line); padding-top: 22px; }
+.compact .row .n { font-size: 33px; }
+.compact .row .n em { font-size: 20px; }
+.compact .row .p { font-size: 33px; }
+.compact .row .p span { font-size: 22px; }
+.strip { display: flex; flex-wrap: wrap; gap: 10px 40px; align-items: baseline; border-top: 2px solid var(--line); padding-top: 14px; }
 .strip b { font: 700 26px var(--display); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-right: 8px; }
-.strip .it { font: 500 28px var(--body); }
-.strip .it i { font: 700 28px var(--display); font-style: normal; color: var(--price); margin-left: 10px; }
+.strip .it { font: 500 32px var(--body); }
+.strip .it i { font: 700 32px var(--display); font-style: normal; color: var(--price); margin-left: 10px; }
 @media (prefers-reduced-motion: no-preference) { .stage { transition: opacity .4s; } }
 </style>
 <style>
